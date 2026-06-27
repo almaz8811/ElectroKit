@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ElectroKit — Расчёт электрики</title>
+<title>ElectroKit - Расчёт электрики</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -203,29 +203,13 @@ a { color: var(--accent); }
         <label>Символ / код</label>
         <input id="cfg-currency" value="" placeholder="₽ / $ / €" oninput="saveSettings()" maxlength="5">
       </div>
-      <h3 style="margin-top:16px">Сеть</h3>
+
+      <h3 style="margin-top:20px">Сеть</h3>
       <div class="cfg-row">
         <label>Напряжение, В</label>
         <input id="cfg-voltage" type="number" value="230" step="1" oninput="saveSettings()">
       </div>
-      <p style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5">Номинал 230В (ПУЭ/ГОСТ). Токи кабеля по ПУЭ табл.1.3.4 даны для одиночной прокладки при +25°C.</p>
-
-      <h3 style="margin-top:16px">Защита мокрых зон</h3>
-      <div class="cfg-row" style="flex-direction:column;align-items:stretch;gap:4px">
-        <label style="flex:none">Схема</label>
-        <select id="cfg-wetScheme" onchange="saveSettings()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:5px 8px;font-size:12px;font-family:'DM Sans',sans-serif;text-align:left">
-          <option value="A">А — дифавтомат на линию</option>
-          <option value="B">Б — УЗО на зону + автоматы</option>
-        </select>
-      </div>
-      <p style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5">Схема А: каждая мокрая линия защищена отдельным АВДТ — срабатывание гасит одну линию. Схема Б: одно УЗО на зону + автоматы — дешевле от 2 линий, но срабатывание гасит всю зону.</p>
-
-      <h3 style="margin-top:16px">Доп. защита</h3>
-      <div class="cfg-row">
-        <label>Противопожарное УЗО 100мА</label>
-        <input id="cfg-fireUzo" type="checkbox" onchange="saveSettings()" style="width:auto;flex:none">
-      </div>
-      <p style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5">Без реле напряжения и УЗИП противопожарное УЗО даёт ложное чувство защиты. Включайте только если в щитке предусмотрены реле напряжения и устройство защиты от импульсных перенапряжений.</p>
+      <p style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5">Номинал 230В (ПУЭ/ГОСТ). Токи кабеля по ПУЭ табл.1.3.4 для одиночной прокладки при +25°C.</p>
     </div>
     <div class="settings-col">
       <h3>Материалы</h3>
@@ -253,7 +237,28 @@ a { color: var(--accent); }
       <div class="cfg-row"><label>Установка выкл. / шт</label><input id="cfg-laborSw" type="number" step="0.01" value="4.00" oninput="saveSettings()"></div>
       <div class="cfg-row"><label>Сборка щитка (всего)</label><input id="cfg-laborPanel" type="number" step="0.01" value="60.00" oninput="saveSettings()"></div>
       <div class="cfg-row"><label>Подкл. группы / шт</label><input id="cfg-laborGroup" type="number" step="0.01" value="8.00" oninput="saveSettings()"></div>
-      <p class="settings-save">Все настройки сохраняются автоматически</p>
+
+      <h3 style="margin-top:20px">Защита мокрых зон</h3>
+      <div class="cfg-row" style="flex-direction:column;align-items:stretch;gap:6px">
+        <label style="flex:none;color:var(--muted);font-size:12px">Схема</label>
+        <select id="cfg-wetScheme" onchange="saveSettings()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:6px 8px;font-size:12px;font-family:'DM Sans',sans-serif">
+          <option value="A">А - дифавтомат на линию</option>
+          <option value="B">Б - УЗО на зону + автоматы</option>
+        </select>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6">
+        <strong style="color:var(--text)">Схема А:</strong> каждая мокрая линия - отдельный АВДТ. Срабатывание гасит одну линию.<br>
+        <strong style="color:var(--text)">Схема Б:</strong> одно УЗО на зону + автоматы. Дешевле от 2 линий, но срабатывание гасит всю зону.
+      </p>
+
+      <h3 style="margin-top:20px">Доп. защита</h3>
+      <div class="cfg-row" style="margin-bottom:6px">
+        <label style="color:var(--muted);font-size:12px">Противопожарное УЗО 100мА</label>
+        <input id="cfg-fireUzo" type="checkbox" onchange="saveSettings()" style="width:16px;height:16px;flex:none;cursor:pointer">
+      </div>
+      <p style="font-size:11px;color:var(--muted);line-height:1.6">Без реле напряжения и УЗИП даёт ложное чувство защиты. Включайте только если в щитке есть реле напряжения и УЗИП.</p>
+
+      <p class="settings-save" style="margin-top:16px">Все настройки сохраняются автоматически</p>
     </div>
   </div>
 
@@ -323,9 +328,15 @@ a { color: var(--accent); }
   <!-- RESULTS -->
   <div id="results">
 
+  <!-- RECALC BANNER -->
+  <div id="recalc-banner" style="display:none;background:#1A1000;border:1px solid #604010;border-radius:6px;padding:10px 16px;font-size:13px;color:#E8A020;margin-bottom:12px;display:none;align-items:center;justify-content:space-between;gap:12px">
+    <span>⚠ Настройки изменены - нажмите <strong>Рассчитать</strong> чтобы обновить результаты</span>
+    <button class="btn btn-sm" onclick="calculate()" style="border-color:#E8A020;color:#E8A020;white-space:nowrap">▶ Рассчитать</button>
+  </div>
+
   <!-- DISCLAIMER -->
   <div style="background:#0A0618;border:1px solid #3A1A60;border-radius:6px;padding:10px 14px;font-size:11px;color:#7060A0;line-height:1.6;margin-bottom:4px">
-    ⚠ Расчёт выполнен для предварительной оценки. Токи кабелей по ПУЭ табл.1.3.4 — для одиночной прокладки в воздухе при +25°C. При групповой прокладке, в трубе или при повышенной температуре допустимый ток снижается — применяйте поправочные коэффициенты. Не является проектной документацией.
+    ⚠ Расчёт выполнен для предварительной оценки. Токи кабелей по ПУЭ табл.1.3.4 - для одиночной прокладки в воздухе при +25°C. При групповой прокладке, в трубе или при повышенной температуре допустимый ток снижается - применяйте поправочные коэффициенты. Не является проектной документацией.
   </div>
 
   <!-- GROUPS -->
@@ -367,8 +378,8 @@ a { color: var(--accent); }
         <div class="din-legend-item"><div class="din-legend-dot" style="background:#30C068;width:8px;height:8px;border-radius:50%"></div>Авт. ≤16А (B/C)</div>
         <div class="din-legend-item"><div class="din-legend-dot" style="background:#D08020;width:8px;height:8px;border-radius:50%"></div>Авт. ≤32А</div>
         <div class="din-legend-item"><div class="din-legend-dot" style="background:#D04040;width:8px;height:8px;border-radius:50%"></div>Авт. >32А</div>
-        <div class="din-legend-item"><div class="din-legend-dot" style="background:#4090D0"></div>Дифавтомат — схема А (10/30мА)</div>
-        <div class="din-legend-item"><div class="din-legend-dot" style="background:#4090E0"></div>УЗО на зону — схема Б (10/30мА)</div>
+        <div class="din-legend-item"><div class="din-legend-dot" style="background:#4090D0"></div>Дифавтомат - схема А (10/30мА)</div>
+        <div class="din-legend-item"><div class="din-legend-dot" style="background:#4090E0"></div>УЗО на зону - схема Б (10/30мА)</div>
       </div>
     </div>
 
@@ -394,7 +405,7 @@ a { color: var(--accent); }
       <div class="smeta-hint" id="smeta-hint"></div>
       <div class="smeta-grand">
         <span class="label">ИТОГО</span>
-        <span class="value" id="smeta-total">—</span>
+        <span class="value" id="smeta-total">-</span>
       </div>
     </div>
 
@@ -427,9 +438,9 @@ const KD = { apartment: 0.7, house: 0.8, office: 0.6 };
 // Минимальное сечение по типу прибора (мм²), независимо от расчётного тока.
 // Духовка/варочная: совмещённые плита+духовка, пусковые токи, нормы новостроек.
 const MIN_SECTION = {
-  oven:        4.0,  // духовой шкаф — минимум 4мм²
-  cooktop:     4.0,  // варочная панель — минимум 4мм²
-  cooktopOven: 6.0   // совмещённая плита+духовка — минимум 6мм²
+  oven:        4.0,  // духовой шкаф - минимум 4мм²
+  cooktop:     4.0,  // варочная панель - минимум 4мм²
+  cooktopOven: 6.0   // совмещённая плита+духовка - минимум 6мм²
 };
 
 // Допустимые длительные токи кабеля ВВГ (медь), ПУЭ табл.1.3.4,
@@ -457,7 +468,7 @@ const DEFAULT_CFG = {
   currency: '',
   voltage: 230,
   wetScheme: 'A',   // 'A' = АВДТ на линию (по умолчанию), 'B' = УЗО на зону + автоматы
-  fireUzo: false,   // противопожарное УЗО 100мА — по умолчанию выкл (требует реле напряжения + УЗИП)
+  fireUzo: false,   // противопожарное УЗО 100мА - по умолчанию выкл (требует реле напряжения + УЗИП)
   cable15: 1.20, cable25: 1.80, cable40: 2.50, cable60: 3.80, cable10: 6.00,
   brk16: 5.50, brk25: 7.00, brk32: 8.00, brk40: 10.00,
   uzo: 25.00, dif: 30.00, panel: 20.00,
@@ -501,16 +512,16 @@ function getVoltage() {
 // minSectionOverride: минимум сечения по типу прибора (напр. духовка 4мм²)
 //
 // Логика (ПУЭ):
-//   • Автомат выбирается по РАБОЧЕМУ току (watts/V) — должен пропускать нагрузку
+//   • Автомат выбирается по РАБОЧЕМУ току (watts/V) - должен пропускать нагрузку
 //     без ложных срабатываний и не превышать допустимый ток кабеля.
-//   • Кабель выбирается с запасом ×1.25 для выделенных линий и кондиционеров —
+//   • Кабель выбирается с запасом ×1.25 для выделенных линий и кондиционеров -
 //     коэффициент защищает кабель от перегрева при длительной нагрузке,
 //     но НЕ поднимает номинал автомата.
 function cableForLoad(watts, lineType, voltage, minSectionOverride) {
   voltage = voltage || 230;
   const cableMargin = (lineType === 'dedicated' || lineType === 'ac') ? 1.25 : 1.0;
-  const breakerI = watts / voltage;                 // ток для автомата — рабочий
-  const cableI   = (watts * cableMargin) / voltage; // ток для кабеля — с запасом
+  const breakerI = watts / voltage;                 // ток для автомата - рабочий
+  const cableI   = (watts * cableMargin) / voltage; // ток для кабеля - с запасом
   const brkClass = (lineType === 'lighting') ? 'B' : 'C';
 
   // Минимальное сечение: по типу линии, при необходимости поднятое типом прибора
@@ -518,15 +529,15 @@ function cableForLoad(watts, lineType, voltage, minSectionOverride) {
   if (minSectionOverride && minSectionOverride > minSec) minSec = minSectionOverride;
   const minIdx = CABLE_TABLE.findIndex(r => parseFloat(r.sec) >= minSec - 1e-9);
 
-  // 1. Автомат — наименьший стандартный номинал, пропускающий рабочий ток (≥ breakerI)
+  // 1. Автомат - наименьший стандартный номинал, пропускающий рабочий ток (≥ breakerI)
   let breaker = STD_BREAKERS.find(b => b >= breakerI) || STD_BREAKERS[STD_BREAKERS.length - 1];
 
-  // 2. Кабель — наименьшее сечение (не ниже минимума), которое одновременно:
-  //    а) выдерживает ток с запасом 1.25 (доп. ток ≥ cableI) — тепловой критерий;
-  //    б) допускает выбранный автомат (maxBrk ≥ breaker) — селективность защиты.
+  // 2. Кабель - наименьшее сечение (не ниже минимума), которое одновременно:
+  //    а) выдерживает ток с запасом 1.25 (доп. ток ≥ cableI) - тепловой критерий;
+  //    б) допускает выбранный автомат (maxBrk ≥ breaker) - селективность защиты.
   let rowIdx = CABLE_TABLE.findIndex((r, i) => i >= minIdx && r.amp >= cableI && r.maxBrk >= breaker);
   if (rowIdx < 0) {
-    // Нагрузка превышает возможности 10мм² — берём максимум и ограничиваем автомат
+    // Нагрузка превышает возможности 10мм² - берём максимум и ограничиваем автомат
     rowIdx = CABLE_TABLE.length - 1;
     breaker = Math.min(breaker, CABLE_TABLE[rowIdx].maxBrk);
   }
@@ -561,13 +572,13 @@ function uzoRating(mainA) {
 
 // Номинал УЗО на мокрую зону по сумме токов линий за ним (п.4).
 // Ближайший стандартный ≥ расчётного тока, но не ниже самого большого
-// автомата за УЗО. 40А зачастую доступнее и дешевле 25А — учитывайте при закупке.
+// автомата за УЗО. 40А зачастую доступнее и дешевле 25А - учитывайте при закупке.
 function uzoForCurrent(sumA, minFloorA) {
   const need = Math.max(sumA || 0, minFloorA || 0);
   return UZO_STD.find(r => r >= need) || 100;
 }
 
-// Группировка мокрых линий в зоны (комната + мА). Для схемы Б — одно УЗО на зону.
+// Группировка мокрых линий в зоны (комната + мА). Для схемы Б - одно УЗО на зону.
 function buildWetZones(wetGroups) {
   const v = getVoltage();
   const map = new Map();
@@ -617,7 +628,14 @@ function saveSettings() {
     else                           cfg[key] = el.value;
   }
   localStorage.setItem('ek_cfg', JSON.stringify(cfg));
-  if (groups.length > 0) refreshResults();
+  if (groups.length > 0) {
+    refreshResults();
+    // Show recalc banner for scheme/fireUzo changes that affect groups
+    const banner = document.getElementById('recalc-banner');
+    if (banner && document.getElementById('results').style.display !== 'none') {
+      banner.style.display = 'flex';
+    }
+  }
 }
 
 function readSettings() {
@@ -806,34 +824,34 @@ function buildGroups(objType) {
     const uzomA   = extraWet ? 10 : 30;
     const dist    = room.distToPanel || 0;
 
-    // Lighting group — class B
+    // Lighting group - class B
     const lightApps = room.appliances.filter(a => a.type === 'lighting');
     if (lightApps.length) {
       const w = lightApps.reduce((s, a) => s + a.count * SPECS.lighting.wPerUnit, 0);
       const { section, breaker, brkClass, allowedA } = cableForLoad(w, 'lighting', voltage);
-      result.push({ num: ++num, label: `${room.name} — Освещение`, room: room.name, watts: w, section, breaker, brkClass, allowedA, wet: false, uzomA: 0, lineType: 'lighting', dist });
+      result.push({ num: ++num, label: `${room.name} - Освещение`, room: room.name, watts: w, section, breaker, brkClass, allowedA, wet: false, uzomA: 0, lineType: 'lighting', dist });
     }
 
-    // Socket group — class C, min 2.5мм²
+    // Socket group - class C, min 2.5мм²
     const socketApps = room.appliances.filter(a => SPECS[a.type] && SPECS[a.type].grp === 'socket');
     if (socketApps.length) {
       const w = socketApps.reduce((s, a) => s + a.count * SPECS[a.type].wPerUnit, 0);
       const socketCount = socketApps.filter(a => a.type === 'socket').reduce((s, a) => s + a.count, 0);
       const { section, breaker, brkClass, allowedA } = cableForLoad(w, 'socket', voltage);
-      result.push({ num: ++num, label: `${room.name} — Розетки и приборы`, room: room.name, watts: w, section, breaker, brkClass, allowedA, wet, uzomA, lineType: 'socket', socketCount, dist });
+      result.push({ num: ++num, label: `${room.name} - Розетки и приборы`, room: room.name, watts: w, section, breaker, brkClass, allowedA, wet, uzomA, lineType: 'socket', socketCount, dist });
     }
 
-    // Dedicated lines — class C, min 2.5мм² (выше для духовки/варочной), коэф. 1.25
+    // Dedicated lines - class C, min 2.5мм² (выше для духовки/варочной), коэф. 1.25
     const dedTypes = ['washing', 'dishwasher', 'oven', 'cooktop', 'cooktopOven', 'waterHeater'];
     for (const t of dedTypes) {
       const apps = room.appliances.filter(a => a.type === t);
       if (!apps.length) continue;
       const w = apps.reduce((s, a) => s + a.count * SPECS[t].wPerUnit, 0);
       const { section, breaker, brkClass, allowedA } = cableForLoad(w, 'dedicated', voltage, MIN_SECTION[t]);
-      result.push({ num: ++num, label: `${room.name} — ${SPECS[t].label}`, room: room.name, watts: w, section, breaker, brkClass, allowedA, wet, uzomA, lineType: 'dedicated', dist });
+      result.push({ num: ++num, label: `${room.name} - ${SPECS[t].label}`, room: room.name, watts: w, section, breaker, brkClass, allowedA, wet, uzomA, lineType: 'dedicated', dist });
     }
 
-    // AC — class C, min 2.5мм², коэф. 1.25
+    // AC - class C, min 2.5мм², коэф. 1.25
     // Больше не исключение для мокрых зон: в МКД УЗО/диф обязателен на всех розеточных группах
     const acApps = room.appliances.filter(a => a.type === 'ac');
     for (const a of acApps) {
@@ -841,7 +859,7 @@ function buildGroups(objType) {
         const w = SPECS.ac.wPerUnit;
         const { section, breaker, brkClass, allowedA } = cableForLoad(w, 'ac', voltage);
         const idx = a.count > 1 ? ` #${i + 1}` : '';
-        result.push({ num: ++num, label: `${room.name} — Кондиционер${idx}`, room: room.name, watts: w, section, breaker, brkClass, allowedA, wet, uzomA, lineType: 'ac', dist });
+        result.push({ num: ++num, label: `${room.name} - Кондиционер${idx}`, room: room.name, watts: w, section, breaker, brkClass, allowedA, wet, uzomA, lineType: 'ac', dist });
       }
     }
 
@@ -850,7 +868,7 @@ function buildGroups(objType) {
     for (const a of customApps) {
       const w = (a.customW || 0) * a.count;
       const { section, breaker, brkClass, allowedA } = cableForLoad(w, 'custom', voltage);
-      result.push({ num: ++num, label: `${room.name} — ${a.customName || 'Произвольный'}`, room: room.name, watts: w, section, breaker, brkClass, allowedA, wet: false, uzomA: 0, lineType: 'custom', dist });
+      result.push({ num: ++num, label: `${room.name} - ${a.customName || 'Произвольный'}`, room: room.name, watts: w, section, breaker, brkClass, allowedA, wet: false, uzomA: 0, lineType: 'custom', dist });
     }
   }
 
@@ -875,12 +893,14 @@ function calculate() {
 
   document.getElementById('results').style.display = 'block';
   document.getElementById('btn-pdf').style.display = 'inline-block';
+  const banner = document.getElementById('recalc-banner');
+  if (banner) banner.style.display = 'none';
 
   // Print header
   const name = document.getElementById('obj-name').value;
   const note = document.getElementById('obj-note').value;
   const objLabel = document.getElementById('obj-type').selectedOptions[0].text;
-  document.getElementById('ph-name').textContent = name || 'ElectroKit — Расчёт';
+  document.getElementById('ph-name').textContent = name || 'ElectroKit - Расчёт';
   document.getElementById('ph-meta').textContent = `${objLabel}${note ? ' · ' + note : ''} · ${new Date().toLocaleDateString('ru-RU')}`;
 
   saveProject();
@@ -943,12 +963,12 @@ function checkWarnings(mainBreaker, totalKd, totalA) {
   const badGroups = groups.filter(g => !g.wet && g.breaker >= mainBreaker);
   if (badGroups.length) {
     const list = badGroups.map(g =>
-      `<li>Гр.${g.num} «${esc(g.label)}» — автомат ${g.breaker} А</li>`
+      `<li>Гр.${g.num} «${esc(g.label)}» - автомат ${g.breaker} А</li>`
     ).join('');
     blocks.push(`<div class="warn-block warn-error">
       <strong>⛔ Нарушена селективность</strong><br>
       Групповой автомат должен быть строго меньше вводного (${mainBreaker} А).
-      При коротком замыкании оба автомата сработают одновременно — обесточится весь щит.
+      При коротком замыкании оба автомата сработают одновременно - обесточится весь щит.
       <ul>${list}</ul>
       Увеличьте вводной автомат или уменьшите групповые.
     </div>`);
@@ -960,7 +980,7 @@ function checkWarnings(mainBreaker, totalKd, totalA) {
   const closeGroups = groups.filter(g => !g.wet && g.breaker < mainBreaker && (mainBreaker - g.breaker) < 8);
   if (closeGroups.length && !badGroups.length) {
     const list = closeGroups.map(g =>
-      `<li>Гр.${g.num} «${esc(g.label)}» — автомат ${g.breaker} А (вводной ${mainBreaker} А)</li>`
+      `<li>Гр.${g.num} «${esc(g.label)}» - автомат ${g.breaker} А (вводной ${mainBreaker} А)</li>`
     ).join('');
     blocks.push(`<div class="warn-block warn-caution">
       <strong>⚠ Низкая селективность</strong><br>
@@ -978,14 +998,14 @@ function checkWarnings(mainBreaker, totalKd, totalA) {
   const loadPct = (totalA / mainBreaker) * 100;
   if (totalA <= mainBreaker && loadPct > 80) {
     tips.push(`Вводной автомат загружен на <strong>${Math.round(loadPct)}%</strong>.
-      Запас менее 20% — при добавлении новых нагрузок потребуется его замена.
+      Запас менее 20% - при добавлении новых нагрузок потребуется его замена.
       Рассмотрите следующий номинал.`);
   }
 
-  // 5. Socket group > 3500 W — suggest splitting
+  // 5. Socket group > 3500 W - suggest splitting
   const heavySockets = groups.filter(g => g.lineType === 'socket' && g.watts > 3500);
   for (const g of heavySockets) {
-    tips.push(`Гр.${g.num} «${esc(g.label)}» — нагрузка ${g.watts} Вт.
+    tips.push(`Гр.${g.num} «${esc(g.label)}» - нагрузка ${g.watts} Вт.
       При такой мощности рекомендуется разделить на две отдельные розеточные группы
       по 2.5 мм² + С16 каждая.`);
   }
@@ -994,12 +1014,12 @@ function checkWarnings(mainBreaker, totalKd, totalA) {
   const crowdedSockets = groups.filter(g => g.lineType === 'socket' && (g.socketCount || 0) > 6);
   for (const g of crowdedSockets) {
     if (!heavySockets.includes(g)) {
-      tips.push(`Гр.${g.num} «${esc(g.label)}» — ${g.socketCount} розеток на одной линии.
+      tips.push(`Гр.${g.num} «${esc(g.label)}» - ${g.socketCount} розеток на одной линии.
         Рекомендуется не более 6 розеток на группу для удобства обслуживания.`);
     }
   }
 
-  // 7. Total DIN modules count — suggest panel size (scheme-aware estimate)
+  // 7. Total DIN modules count - suggest panel size (scheme-aware estimate)
   const cfgW = readSettings();
   const schemeW = cfgW.wetScheme === 'B' ? 'B' : 'A';
   const dryGroups = groups.filter(g => !g.wet);
@@ -1054,14 +1074,14 @@ function renderGroups(totalRaw, totalKd, totalA) {
       <td style="color:var(--muted);font-family:'Space Mono',monospace">${g.num}</td>
       <td>${esc(g.label)}</td>
       <td style="font-family:'Space Mono',monospace">${g.watts} Вт</td>
-      <td title="Допустимый ток ${g.allowedA || cableAllowedA(g.section)} А — ПУЭ табл.1.3.4, одиночная прокладка, +25°C. При групповой прокладке или в трубе применяйте понижающий коэффициент.">
+      <td title="Допустимый ток ${g.allowedA || cableAllowedA(g.section)} А - ПУЭ табл.1.3.4, одиночная прокладка, +25°C. При групповой прокладке или в трубе применяйте понижающий коэффициент.">
         ВВГнг 3×${g.section} мм²
         <div style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace">доп. ${g.allowedA || cableAllowedA(g.section)} А</div>
       </td>
       <td>${bChip}</td>
       <td>${protChip}</td>
       <td class="no-print">
-        <input class="len-input" type="number" min="0" placeholder="—" value="${lineLens[g.num] || ''}" data-group="${g.num}" oninput="updateLen(this)">
+        <input class="len-input" type="number" min="0" placeholder="-" value="${lineLens[g.num] || ''}" data-group="${g.num}" oninput="updateLen(this)">
         <div id="vd-${g.num}" style="font-size:10px;margin-top:2px;font-family:'Space Mono',monospace"></div>
       </td>
     </tr>`;
@@ -1076,7 +1096,7 @@ function renderGroups(totalRaw, totalKd, totalA) {
     <td colspan="4"></td>
   </tr>
   <tr class="tbl-footer">
-    <td colspan="2" title="Коэффициент спроса учитывает что не все приборы работают одновременно. Квартира: 0.7, дом: 0.8, офис: 0.6 — по нормам проектирования.">
+    <td colspan="2" title="Коэффициент спроса учитывает что не все приборы работают одновременно. Квартира: 0.7, дом: 0.8, офис: 0.6 - по нормам проектирования.">
       РАСЧЁТНАЯ НАГРУЗКА
       <span style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-left:6px">${Math.round(totalRaw)} × Kd ${kd} (${objLabel})</span>
     </td>
@@ -1150,7 +1170,7 @@ function renderPanel() {
 
   const dryMod = (g) => {
     const cls = g.breaker <= 16 ? 'din-brk-g' : g.breaker <= 32 ? 'din-brk-a' : 'din-brk-r';
-    return `<div class="din-mod ${cls}" title="Гр.${g.num}: ${esc(g.label)} — Авт. ${g.brkClass||'C'}${g.breaker}А">
+    return `<div class="din-mod ${cls}" title="Гр.${g.num}: ${esc(g.label)} - Авт. ${g.brkClass||'C'}${g.breaker}А">
       <div class="mod-type">Авт.</div>
       <div class="mod-val">${g.brkClass||'C'}${g.breaker}А</div>
       <div class="mod-type">Гр.${g.num}</div>
@@ -1166,7 +1186,7 @@ function renderPanel() {
     <div class="mod-type">Авт.</div>
   </div>`;
 
-  // 2. Противопожарное УЗО 100мА — только если включено в настройках (опция)
+  // 2. Противопожарное УЗО 100мА - только если включено в настройках (опция)
   if (cfg.fireUzo) {
     const uzoA = uzoRating(mainA);
     html += `<div class="din-mod din-uzo" title="Противопожарное УЗО ${uzoA}А/100мА (требует реле напряжения + УЗИП)">
@@ -1179,22 +1199,22 @@ function renderPanel() {
   const dryGroups = groups.filter(g => !g.wet);
   const wetGroups = groups.filter(g => g.wet);
 
-  // 3. Сухие группы — обычные автоматы
+  // 3. Сухие группы - обычные автоматы
   for (const g of dryGroups) html += dryMod(g);
 
-  // 4. Мокрые зоны — по выбранной схеме
+  // 4. Мокрые зоны - по выбранной схеме
   if (scheme === 'B') {
     // Схема Б: одно УЗО на зону + обычные автоматы за ним
     const zones = buildWetZones(wetGroups);
     for (const z of zones) {
-      html += `<div class="din-mod din-uzow" title="${esc(z.room)} — УЗО ${z.uzoRating}А/${z.uzomA}мА (расч. ток ${z.sumA.toFixed(1)} А)">
+      html += `<div class="din-mod din-uzow" title="${esc(z.room)} - УЗО ${z.uzoRating}А/${z.uzomA}мА (расч. ток ${z.sumA.toFixed(1)} А)">
         <div class="mod-type">УЗО ${z.uzomA}мА</div>
         <div class="mod-val">${z.uzoRating}А</div>
         <div class="mod-type">${esc(z.room).slice(0,8)}</div>
       </div>`;
       for (const g of z.groups) {
         const cls = g.breaker <= 16 ? 'din-brk-g' : g.breaker <= 32 ? 'din-brk-a' : 'din-brk-r';
-        html += `<div class="din-mod ${cls}" title="Гр.${g.num}: ${esc(g.label)} — Авт. ${g.brkClass||'C'}${g.breaker}А (за УЗО ${z.uzomA}мА)">
+        html += `<div class="din-mod ${cls}" title="Гр.${g.num}: ${esc(g.label)} - Авт. ${g.brkClass||'C'}${g.breaker}А (за УЗО ${z.uzomA}мА)">
           <div class="mod-type">Авт.</div>
           <div class="mod-val">${g.brkClass||'C'}${g.breaker}А</div>
           <div class="mod-type">Гр.${g.num}</div>
@@ -1205,7 +1225,7 @@ function renderPanel() {
     // Схема А: дифавтомат на каждую мокрую линию
     for (const g of wetGroups) {
       const mA = g.uzomA || 30;
-      html += `<div class="din-mod din-dif" title="Гр.${g.num}: ${esc(g.label)} — Диф ${g.brkClass||'C'}${g.breaker}А/${mA}мА">
+      html += `<div class="din-mod din-dif" title="Гр.${g.num}: ${esc(g.label)} - Диф ${g.brkClass||'C'}${g.breaker}А/${mA}мА">
         <div class="mod-type">Диф ${mA}мА</div>
         <div class="mod-val">${g.brkClass||'C'}${g.breaker}А</div>
         <div class="mod-type">Гр.${g.num}</div>
@@ -1232,7 +1252,7 @@ function renderCost() {
   }
   const totalLineM = Object.values(cableM).reduce((s, v) => s + v, 0);
 
-  // Protection devices — scheme-aware (п.3, п.4, п.5)
+  // Protection devices - scheme-aware (п.3, п.4, п.5)
   const scheme = cfg.wetScheme === 'B' ? 'B' : 'A';
   const brkCount = {};
   let difCount = 0;
@@ -1424,8 +1444,8 @@ function renderDataInfo() {
   const totalKB = ((proj.length + cfg.length) / 1024).toFixed(1);
 
   const projDate = proj ? (() => {
-    try { const d = JSON.parse(proj); return d._saved ? new Date(d._saved).toLocaleDateString('ru-RU') : '—'; } catch { return '—'; }
-  })() : '—';
+    try { const d = JSON.parse(proj); return d._saved ? new Date(d._saved).toLocaleDateString('ru-RU') : '-'; } catch { return '-'; }
+  })() : '-';
 
   el.innerHTML = `
     <strong>Проект:</strong> ${proj ? projKB + ' КБ' : 'не сохранён'} &nbsp;·&nbsp;
@@ -1465,7 +1485,7 @@ function resetSettings() {
 }
 
 function clearAll() {
-  if (!confirm('Удалить ВСЕ данные — проект и настройки? Это действие необратимо.')) return;
+  if (!confirm('Удалить ВСЕ данные - проект и настройки? Это действие необратимо.')) return;
   localStorage.removeItem('ek_proj');
   localStorage.removeItem('ek_cfg');
   rooms = [];
