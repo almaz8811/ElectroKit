@@ -14,7 +14,7 @@
 
 Результат: **ElectroKit** — один HTML-файл, никаких зависимостей.
 
-**[Попробовать онлайн](https://darkenamber.github.io/electrokit)** | **[GitHub](https://github.com/darkenamber/electrokit)**
+**[Попробовать онлайн](https://darkenamber.github.io/electrokit/electrokit.html)** | **[GitHub](https://github.com/darkenamber/electrokit)**
 
 ---
 
@@ -221,7 +221,7 @@ ElectroKit — инструмент для **предварительной оц
 
 ## Ссылки
 
-- **[Онлайн-версия](https://darkenamber.github.io/electrokit)**
+- **[Онлайн-версия](https://darkenamber.github.io/electrokit/electrokit.html)**
 - **[GitHub](https://github.com/darkenamber/electrokit)**
 - **[Скачать HTML](https://github.com/darkenamber/electrokit/releases/latest)**
 
