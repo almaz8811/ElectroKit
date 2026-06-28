@@ -721,6 +721,11 @@ function loadProject() {
       id: r.id || rid(),
       appliances: (r.appliances || []).map(a => ({ ...a, id: a.id || aid() }))
     }));
+    // Синхронизируем счётчики чтобы новые id не совпадали с загруженными
+    const maxRid = Math.max(0, ...rooms.map(r => r.id));
+    const maxAid = Math.max(0, ...rooms.flatMap(r => r.appliances.map(a => a.id)));
+    if (maxRid > _roomId) _roomId = maxRid;
+    if (maxAid > _appId)  _appId  = maxAid;
     renderRooms();
   } catch(e) { console.warn('loadProject:', e); }
 }
@@ -1760,6 +1765,10 @@ function importProject() {
           ...r, id: r.id || rid(),
           appliances: (r.appliances || []).map(a => ({ ...a, id: a.id || aid() }))
         }));
+        const maxRid2 = Math.max(0, ...rooms.map(r => r.id));
+        const maxAid2 = Math.max(0, ...rooms.flatMap(r => r.appliances.map(a => a.id)));
+        if (maxRid2 > _roomId) _roomId = maxRid2;
+        if (maxAid2 > _appId)  _appId  = maxAid2;
         renderRooms();
         saveProject();
         document.getElementById('results').style.display = 'none';
