@@ -15,7 +15,7 @@
   --accent:   #E8A020;
   --accent2:  #C07810;
   --text:     #D0C0E8;
-  --muted:    #7060A0;
+  --muted:    #9080B8;
   --green:    #20A060;
   --amber:    #C07810;
   --red:      #A02040;
@@ -96,7 +96,7 @@ a { color: var(--accent); }
 .chip-green { background: #081E12; color: #30D070; border: 1px solid #1A5030; }
 .chip-amber { background: #1E1200; color: #E8A020; border: 1px solid #503010; }
 .chip-red   { background: #1E0610; color: #E03060; border: 1px solid #501030; }
-.chip-blue  { background: #060E28; color: #50A0E0; border: 1px solid #1A3870; }
+.chip-blue  { background: #041820; color: #20C0D0; border: 1px solid #106070; }
 .len-input { width: 70px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); padding: 4px 6px; font-size: 14px; text-align: center; font-family: 'Space Mono', monospace; }
 .len-input:focus { outline: none; border-color: var(--accent); }
 .tbl-footer td { border-top: 2px solid var(--border); background: var(--bg2); color: var(--muted); font-size: 14px; padding: 8px 10px; }
@@ -110,12 +110,12 @@ a { color: var(--accent); }
 /* ЩИТОК */
 .panel-title { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--muted); margin-bottom: 8px; }
 .din-rail { display: flex; flex-wrap: wrap; gap: 4px; padding: 12px; background: #080514; border-radius: 6px; border: 1px solid var(--border); }
-.din-mod { border-radius: 4px; padding: 5px 6px; font-family: 'Space Mono', monospace; font-size: 9px; line-height: 1.3; text-align: center; min-width: 44px; cursor: default; }
-.din-mod .mod-type { font-size: 7px; opacity: .7; text-transform: uppercase; }
-.din-mod .mod-val { font-size: 14px; font-weight: 700; }
+.din-mod { border-radius: 4px; padding: 6px 7px; font-family: 'Space Mono', monospace; font-size: 10px; line-height: 1.3; text-align: center; min-width: 48px; cursor: default; }
+.din-mod .mod-type { font-size: 8px; opacity: .8; text-transform: uppercase; }
+.din-mod .mod-val { font-size: 13px; font-weight: 700; }
 .din-main  { background: #1E1000; color: #E8A020; border: 1px solid #604010; }
 .din-uzo   { background: #001828; color: #20C0D0; border: 1px solid #105060; }
-.din-uzow  { background: #000E28; color: #4090E0; border: 1px solid #102860; }
+.din-uzow  { background: #041820; color: #20C0D0; border: 1px solid #106070; }
 .din-dif   { background: #080E28; color: #60A0F0; border: 1px solid #1A3070; }
 .din-brk-g { background: #081A10; color: #30D068; border: 1px solid #1A5028; }
 .din-brk-a { background: #1E1200; color: #D08020; border: 1px solid #504010; }
@@ -157,8 +157,8 @@ a { color: var(--accent); }
 .warn-caution { background: #181000; border: 1px solid #604010; color: #C08040; }
 .warn-caution strong { color: #E8A020; font-family: 'Space Mono', monospace; }
 
-.warn-info    { background: #060C22; border: 1px solid #1A3060; color: #60A0C0; }
-.warn-info strong { color: #40C0E0; font-family: 'Space Mono', monospace; }
+.warn-info    { background: #041820; border: 1px solid #106070; color: #80C8D0; }
+.warn-info strong { color: #20C0D0; font-family: 'Space Mono', monospace; }
 @media print {
   .no-print { display: none !important; }
   body { background: #fff; color: #000; font-size: 11pt; }
@@ -293,6 +293,13 @@ a { color: var(--accent); }
         <input id="obj-name" placeholder="Квартира на ул. Нефтяников" oninput="saveProject()">
       </div>
       <div class="field">
+        <label>Тип сети</label>
+        <select id="obj-phase" onchange="saveProject()">
+          <option value="1" selected>Однофазная 230В</option>
+          <option value="3">Трёхфазная 400/230В</option>
+        </select>
+      </div>
+      <div class="field">
         <label>Тип объекта</label>
         <select id="obj-type" onchange="saveProject()">
           <option value="apartment">Квартира (Kd 0.7)</option>
@@ -338,7 +345,7 @@ a { color: var(--accent); }
   </div>
 
   <!-- DISCLAIMER -->
-  <div style="background:#0A0618;border:1px solid #3A1A60;border-radius:6px;padding:10px 14px;font-size:11px;color:#7060A0;line-height:1.6;margin-bottom:4px">
+  <div style="background:#0A0618;border:1px solid #3A2060;border-radius:6px;padding:10px 14px;font-size:11px;color:#9080B8;line-height:1.6;margin-bottom:4px">
     ⚠ Расчёт выполнен для предварительной оценки. Токи кабелей по ПУЭ табл.1.3.4 - для одиночной прокладки в воздухе при +25°C. При групповой прокладке, в трубе или при повышенной температуре допустимый ток снижается - применяйте поправочные коэффициенты. Не является проектной документацией.
   </div>
 
@@ -364,6 +371,7 @@ a { color: var(--accent); }
             <th>Кабель</th>
             <th>Автомат</th>
             <th>Тип защиты</th>
+            <th id="th-phase" style="display:none">Фаза</th>
             <th class="no-print">Длина, м</th>
           </tr>
         </thead>
@@ -375,6 +383,14 @@ a { color: var(--accent); }
         <div class="section-title" style="margin-bottom:8px">Итого по кабелю</div>
         <div class="cable-sum" id="cable-sum"></div>
         <div class="cable-hint" id="cable-hint"></div>
+      </div>
+    </div>
+
+    <!-- PHASE BALANCE (3-phase only) -->
+    <div id="phase-balance-block" style="display:none;margin-bottom:16px">
+      <div class="card">
+        <div class="section-title">Распределение по фазам</div>
+        <div id="phase-balance-content"></div>
       </div>
     </div>
 
@@ -681,6 +697,7 @@ function saveProject() {
   const d = {
     name:    document.getElementById('obj-name').value,
     type:    document.getElementById('obj-type').value,
+    phase:   document.getElementById('obj-phase').value,
     breaker: document.getElementById('obj-breaker').value,
     note:    document.getElementById('obj-note').value,
     rooms,
@@ -696,6 +713,7 @@ function loadProject() {
     if (!d) return;
     document.getElementById('obj-name').value    = d.name    || '';
     document.getElementById('obj-type').value    = d.type    || 'apartment';
+    document.getElementById('obj-phase').value   = d.phase   || '1';
     document.getElementById('obj-breaker').value = d.breaker || '32';
     document.getElementById('obj-note').value    = d.note    || '';
     rooms = (d.rooms || []).map(r => ({
@@ -892,7 +910,35 @@ function buildGroups(objType) {
   return result;
 }
 
-// ─── CALCULATE ───────────────────────────────────────────────────────────────
+// ─── PHASE DISTRIBUTION (3-phase greedy algorithm) ───────────────────────────
+
+// Distributes groups across L1/L2/L3 to minimise imbalance.
+// Three-phase loads (3ph flag) are assigned to all three phases simultaneously.
+// Single-phase loads are assigned greedily to the least-loaded phase.
+function distributePhases(groups) {
+  const loads = [0, 0, 0]; // L1, L2, L3 in watts
+  for (const g of groups) {
+    if (g.phase3) {
+      // Three-phase load — split evenly across all phases
+      const w3 = g.watts / 3;
+      g.phases = ['L1', 'L2', 'L3'];
+      loads[0] += w3; loads[1] += w3; loads[2] += w3;
+    } else {
+      // Single-phase — assign to least loaded phase
+      const minIdx = loads.indexOf(Math.min(...loads));
+      g.phase = ['L1', 'L2', 'L3'][minIdx];
+      loads[minIdx] += g.watts;
+    }
+  }
+  return { groups, phaseW: loads };
+}
+
+function phaseBalance(phaseW) {
+  const avg = phaseW.reduce((s, v) => s + v, 0) / 3;
+  if (avg === 0) return 0;
+  const maxDev = Math.max(...phaseW.map(w => Math.abs(w - avg)));
+  return (maxDev / avg) * 100;
+}
 
 function calculate() {
   if (!rooms.length) { alert('Добавьте хотя бы одну комнату'); return; }
@@ -938,6 +984,19 @@ function refreshResults() {
   const totalKd  = totalRaw * kd;
   const totalA   = totalKd / getVoltage();
 
+  // Phase distribution (3-phase mode)
+  const is3ph = document.getElementById('obj-phase').value === '3';
+  let phaseW = [0, 0, 0];
+  if (is3ph) {
+    const dist = distributePhases(groups);
+    phaseW = dist.phaseW;
+  } else {
+    // Hide phase balance block in 1-phase mode
+    const pb = document.getElementById('phase-balance-block');
+    if (pb) pb.style.display = 'none';
+    groups.forEach(g => { delete g.phase; delete g.phases; });
+  }
+
   renderGroups(totalRaw, totalKd, totalA);
 
   // Re-apply ΔU indicators for known line lengths
@@ -957,6 +1016,7 @@ function refreshResults() {
   }
 
   renderPanel();
+  if (is3ph) renderPhaseBalance(phaseW, getVoltage());
   checkWarnings(mainBreaker, totalKd, totalA);
   renderCost();
 }
@@ -1138,6 +1198,10 @@ function renderGroups(totalRaw, totalKd, totalA) {
   const scheme = (readSettings().wetScheme === 'B') ? 'B' : 'A';
   const SECTIONS = ['1.5', '2.5', '4.0', '6.0', '10'];
 
+    const is3ph = document.getElementById('obj-phase').value === '3';
+    const phTh  = document.getElementById('th-phase');
+    if (phTh) phTh.style.display = is3ph ? '' : 'none';
+
   body.innerHTML = groups.map(g => {
     const ov  = manualOverrides[g.num] || {};
     const sec = ov.section || g.section;
@@ -1150,7 +1214,7 @@ function renderGroups(totalRaw, totalKd, totalA) {
         ? `<span class="chip chip-blue">Авт.+УЗО ${mA}мА</span>`
         : `<span class="chip chip-blue">Диф ${mA}мА</span>`;
     } else {
-      protChip = `<span class="chip" style="background:#1A1208;color:var(--muted);border:1px solid var(--border)">Автомат</span>`;
+      protChip = `<span class="chip" style="background:#1A1A1A;color:#A0A0B0;border:1px solid #404050">Автомат</span>`;
     }
 
     // Cable cell
@@ -1178,6 +1242,7 @@ function renderGroups(totalRaw, totalKd, totalA) {
       <td>${cableCell}</td>
       <td>${brkCell}</td>
       <td>${protChip}</td>
+      ${is3ph ? `<td style="font-family:'Space Mono',monospace;font-weight:700;color:${g.phases?'var(--cyan)':g.phase==='L1'?'#E8A020':g.phase==='L2'?'#20C060':'#B060E0'}">${g.phases?'3Ф':(g.phase||'-')}</td>` : ''}
       <td class="no-print">
         <input class="len-input" type="number" min="0" placeholder="-" value="${lineLens[g.num] || ''}" data-group="${g.num}" oninput="updateLen(this)">
         <div id="vd-${g.num}" style="font-size:10px;margin-top:2px;font-family:'Space Mono',monospace"></div>
@@ -1263,6 +1328,48 @@ function renderCableSum() {
   ).join('');
 }
 
+// ─── RENDER PHASE BALANCE ────────────────────────────────────────────────────
+
+function renderPhaseBalance(phaseW, voltage) {
+  const block = document.getElementById('phase-balance-block');
+  const content = document.getElementById('phase-balance-content');
+  if (!block || !content) return;
+
+  const bal = phaseBalance(phaseW);
+  const labels = ['L1', 'L2', 'L3'];
+  const colors = ['#E8A020', '#20C060', '#B060E0'];
+  const maxW = Math.max(...phaseW) || 1;
+
+  const balChip = bal < 10
+    ? `<span class="chip chip-green">✔ Баланс отличный (${bal.toFixed(0)}%)</span>`
+    : bal < 25
+      ? `<span class="chip chip-amber">⚠ Перекос умеренный (${bal.toFixed(0)}%)</span>`
+      : `<span class="chip chip-red">⛔ Перекос высокий (${bal.toFixed(0)}%)</span>`;
+
+  content.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:14px">
+      ${labels.map((l, i) => {
+        const w = phaseW[i];
+        const A = (w / voltage).toFixed(1);
+        const pct = Math.round((w / maxW) * 100);
+        return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px">
+          <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--muted);margin-bottom:6px">${l}</div>
+          <div style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:${colors[i]}">${Math.round(w)} Вт</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:4px">${A} А</div>
+          <div style="margin-top:10px;background:var(--bg);border-radius:3px;height:6px;overflow:hidden">
+            <div style="width:${pct}%;height:100%;background:${colors[i]};border-radius:3px"></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      ${balChip}
+      <span style="font-size:13px;color:var(--muted)">Автоматическое распределение нагрузки по фазам - оптимальный баланс</span>
+    </div>`;
+
+  block.style.display = 'block';
+}
+
 // ─── RENDER PANEL ────────────────────────────────────────────────────────────
 
 function renderPanel() {
@@ -1282,9 +1389,11 @@ function renderPanel() {
 
   let html = '';
 
+  const is3ph = document.getElementById('obj-phase').value === '3';
+
   // 1. Вводной автомат
-  html += `<div class="din-mod din-main" title="Вводной автомат C${mainA}А">
-    <div class="mod-type">Ввод</div>
+  html += `<div class="din-mod din-main" title="Вводной автомат ${is3ph?'4P':'2P'} C${mainA}А">
+    <div class="mod-type">Ввод ${is3ph?'4P':'2P'}</div>
     <div class="mod-val">C${mainA}А</div>
     <div class="mod-type">Авт.</div>
   </div>`;
