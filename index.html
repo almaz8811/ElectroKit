@@ -793,7 +793,7 @@ function onAppW(roomId, appId, val) {
   const el = document.getElementById(`ww-${roomId}-${appId}`);
   if (el) {
     const grp = SPECS[a.type] ? SPECS[a.type].grp : '';
-    if (a.customW > 3500 && grp === 'socket') {
+    if (a.customW > 2000 && grp === 'socket') {
       el.textContent = '⚠ рекомендуется выделенная линия';
     } else if (a.customW > 5000) {
       el.textContent = '⚠ очень высокая мощность';
@@ -861,7 +861,7 @@ function renderRooms() {
         ${customNameField}
         <input type="number" min="1" value="${currentW}" style="width:75px" title="Мощность Вт (типовое: ${specW} Вт)" oninput="onAppW(${r.id},${a.id},this.value)">
         <span class="lbl-small">Вт</span>
-        <span id="ww-${r.id}-${a.id}" style="font-size:11px;color:#E8A020">${currentW > 3500 && SPECS[a.type] && SPECS[a.type].grp === 'socket' ? '⚠ рекомендуется выделенная линия' : ''}</span>
+        <span id="ww-${r.id}-${a.id}" style="font-size:11px;color:#E8A020">${currentW > 2000 && SPECS[a.type] && SPECS[a.type].grp === 'socket' ? '⚠ рекомендуется выделенная линия' : ''}</span>
         <button class="btn btn-sm btn-danger" onclick="deleteAppliance(${r.id},${a.id})">✕</button>
       </div>`;
     }).join('');
