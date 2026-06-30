@@ -18,6 +18,7 @@
     <span class="badge">ПУЭ · 220В</span>
   </div>
   <div class="header-btns">
+    <button class="btn btn-sm" id="theme-toggle" onclick="toggleTheme()" title="Переключить тему">🌓</button>
     <a href="https://github.com/DarkenAmber" target="_blank" class="btn btn-sm" style="text-decoration:none">🐙 GitHub</a>
     <a href="https://www.patreon.com/cw/DarkenAmber" target="_blank" class="btn btn-sm" style="text-decoration:none">❤️ Patreon</a>
     <a href="https://ko-fi.com/darkenamber" target="_blank" class="btn btn-sm" style="text-decoration:none">☕ Ko-fi</a>
@@ -171,13 +172,13 @@
   <div id="results">
 
   <!-- RECALC BANNER -->
-  <div id="recalc-banner" style="display:none;background:#1A1000;border:1px solid #604010;border-radius:6px;padding:10px 16px;font-size:13px;color:#E8A020;margin-bottom:12px;display:none;align-items:center;justify-content:space-between;gap:12px">
+  <div id="recalc-banner" class="recalc-banner" style="display:none">
     <span>⚠ Настройки изменены - нажмите <strong>Рассчитать</strong> чтобы обновить результаты</span>
     <button class="btn btn-sm" onclick="calculate()" style="border-color:#E8A020;color:#E8A020;white-space:nowrap">▶ Рассчитать</button>
   </div>
 
   <!-- DISCLAIMER -->
-  <div style="background:#0A0618;border:1px solid #3A2060;border-radius:6px;padding:10px 14px;font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:4px">
+  <div class="disclaimer">
     ⚠ Расчёт выполнен для предварительной оценки. Токи кабелей по ПУЭ табл.1.3.4 - для одиночной прокладки в воздухе при +25°C. При групповой прокладке, в трубе или при повышенной температуре допустимый ток снижается - применяйте поправочные коэффициенты. Противопожарное УЗО 100мА защищает от токов утечки на землю - это самостоятельное устройство, не связанное с реле напряжения или УЗИП (это принципиально разные устройства с разными функциями). Заземление и тип системы заземления (TN-C-S, TN-S, TT) инструментом не рассчитываются - проверку контура заземления выполняет специалист с измерительным оборудованием. Не является проектной документацией.
   </div>
 
@@ -525,7 +526,7 @@ function readSettings() {
 
 function toggleSettings() {
   const p = document.getElementById('settings-panel');
-  const isOpen = p.style.display !== 'none';
+  const isOpen = p.style.display === 'block';
   p.style.display = isOpen ? 'none' : 'block';
   if (!isOpen) renderDataInfo();
 }
@@ -1109,7 +1110,7 @@ function renderGroups(totalRaw, totalKd, totalA) {
         ? `<span class="chip chip-blue">Авт.+УЗО ${mA}мА</span>`
         : `<span class="chip chip-blue">Диф ${mA}мА</span>`;
     } else {
-      protChip = `<span class="chip" style="background:#1A1A1A;color:#A0A0B0;border:1px solid #404050">Автомат</span>`;
+      protChip = `<span class="chip chip-gray">Автомат</span>`;
     }
 
     // Cable cell
@@ -1766,9 +1767,30 @@ function doPrint() {
   window.print();
 }
 
+// ─── THEME TOGGLE ────────────────────────────────────────────────────────────
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const currentTheme = html.getAttribute('data-theme') || 'dark';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', newTheme);
+  localStorage.setItem('ek_theme', newTheme);
+
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = newTheme === 'dark' ? '🌓' : '☀️';
+}
+
+function loadTheme() {
+  const saved = localStorage.getItem('ek_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = saved === 'dark' ? '🌓' : '☀️';
+}
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
+  loadTheme();
   initSettings();
   loadProject();
   if (!rooms.length) {
