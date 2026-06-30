@@ -6,6 +6,10 @@
 *~
 .DS_Store
 
+# Server data files
+data/
+*.json.bak
+
 # Logs
 *.log
 npm-debug.log*

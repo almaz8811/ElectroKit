@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script src="api.js"></script>
 </head>
 <body>
 
@@ -476,13 +477,28 @@ function fmtCur(n, cur) { return `${fmt(n)} ${cur}`; }
 
 // ─── SETTINGS ────────────────────────────────────────────────────────────────
 
-function loadSettings() {
-  try { return { ...DEFAULT_CFG, ...JSON.parse(localStorage.getItem('ek_cfg') || '{}') }; }
-  catch { return { ...DEFAULT_CFG }; }
+async function loadSettings() {
+  // Try server first
+  const serverSettings = await loadSettingsFromServer();
+  if (serverSettings) {
+    return { ...DEFAULT_CFG, ...serverSettings };
+  }
+
+  // Fallback to localStorage
+  try {
+    const local = localStorage.getItem('ek_cfg');
+    if (local) {
+      return { ...DEFAULT_CFG, ...JSON.parse(local) };
+    }
+  } catch (e) {
+    console.warn('Failed to load settings from localStorage:', e);
+  }
+
+  return { ...DEFAULT_CFG };
 }
 
-function initSettings() {
-  const cfg = loadSettings();
+async function initSettings() {
+  const cfg = await loadSettings();
   for (const key of Object.keys(DEFAULT_CFG)) {
     const el = document.getElementById('cfg-' + key);
     if (!el) continue;
@@ -491,7 +507,7 @@ function initSettings() {
   }
 }
 
-function saveSettings() {
+async function saveSettings() {
   const cfg = {};
   for (const key of Object.keys(DEFAULT_CFG)) {
     const el = document.getElementById('cfg-' + key);
@@ -500,10 +516,15 @@ function saveSettings() {
     else if (el.type === 'number') cfg[key] = parseFloat(el.value) || 0;
     else                           cfg[key] = el.value;
   }
+
+  // Save to server
+  await saveSettingsToServer(cfg);
+
+  // Also save to localStorage as backup
   localStorage.setItem('ek_cfg', JSON.stringify(cfg));
+
   if (groups.length > 0) {
     refreshResults();
-    // Show recalc banner for scheme/fireUzo changes that affect groups
     const banner = document.getElementById('recalc-banner');
     if (banner && document.getElementById('results').style.display !== 'none') {
       banner.style.display = 'flex';
@@ -533,8 +554,11 @@ function toggleSettings() {
 
 // ─── PROJECT PERSISTENCE ──────────────────────────────────────────────────────
 
-function saveProject() {
+let currentProjectId = null;
+
+async function saveProject() {
   const d = {
+    id: currentProjectId,
     name:    document.getElementById('obj-name').value,
     type:    document.getElementById('obj-type').value,
     phase:   document.getElementById('obj-phase').value,
@@ -544,14 +568,39 @@ function saveProject() {
     panelOrder,
     _saved:  new Date().toISOString()
   };
+
+  // Save to server
+  const saved = await saveProjectToServer(d);
+  if (saved && saved.id) {
+    currentProjectId = saved.id;
+  }
+
+  // Also save to localStorage as backup
   localStorage.setItem('ek_proj', JSON.stringify(d));
+
   renderDataInfo();
 }
 
-function loadProject() {
+async function loadProject() {
   try {
-    const d = JSON.parse(localStorage.getItem('ek_proj') || 'null');
+    // Try server first
+    const projects = await loadProjectsFromServer();
+    let d = null;
+
+    if (projects && projects.length > 0) {
+      // Load most recent project
+      d = projects.sort((a, b) => new Date(b._saved) - new Date(a._saved))[0];
+    } else {
+      // Fallback to localStorage
+      const local = localStorage.getItem('ek_proj');
+      if (local) {
+        d = JSON.parse(local);
+      }
+    }
+
     if (!d) return;
+
+    currentProjectId = d.id;
     document.getElementById('obj-name').value    = d.name    || '';
     document.getElementById('obj-type').value    = d.type    || 'apartment';
     document.getElementById('obj-phase').value   = d.phase   || '1';
@@ -562,14 +611,16 @@ function loadProject() {
       id: r.id || rid(),
       appliances: (r.appliances || []).map(a => ({ ...a, id: a.id || aid() }))
     }));
-    // Синхронизируем счётчики чтобы новые id не совпадали с загруженными
+
     const maxRid = Math.max(0, ...rooms.map(r => r.id));
     const maxAid = Math.max(0, ...rooms.flatMap(r => r.appliances.map(a => a.id)));
     if (maxRid > _roomId) _roomId = maxRid;
     if (maxAid > _appId)  _appId  = maxAid;
     if (d.panelOrder) panelOrder = d.panelOrder;
     renderRooms();
-  } catch(e) { console.warn('loadProject:', e); }
+  } catch(e) {
+    console.warn('loadProject:', e);
+  }
 }
 
 // ─── ROOMS UI ────────────────────────────────────────────────────────────────
@@ -1655,7 +1706,11 @@ function renderDataInfo() {
 
 function clearProject() {
   if (!confirm('Удалить текущий проект? Настройки цен останутся.')) return;
+  if (currentProjectId) {
+    deleteProjectFromServer(currentProjectId);
+  }
   localStorage.removeItem('ek_proj');
+  currentProjectId = null;
   rooms = [];
   renderRooms();
   document.getElementById('obj-name').value    = '';
@@ -1668,9 +1723,15 @@ function clearProject() {
   renderDataInfo();
 }
 
-function resetSettings() {
+async function resetSettings() {
   if (!confirm('Сбросить все цены и настройки к значениям по умолчанию?')) return;
+
+  // Reset on server
+  await saveSettingsToServer(DEFAULT_CFG);
+
+  // Reset localStorage
   localStorage.removeItem('ek_cfg');
+
   for (const key of Object.keys(DEFAULT_CFG)) {
     const el = document.getElementById('cfg-' + key);
     if (!el) continue;
@@ -1683,8 +1744,18 @@ function resetSettings() {
 
 function clearAll() {
   if (!confirm('Удалить ВСЕ данные - проект и настройки? Это действие необратимо.')) return;
+
+  // Clear server data
+  if (currentProjectId) {
+    deleteProjectFromServer(currentProjectId);
+  }
+  saveSettingsToServer(DEFAULT_CFG);
+
+  // Clear localStorage
   localStorage.removeItem('ek_proj');
   localStorage.removeItem('ek_cfg');
+
+  currentProjectId = null;
   rooms = [];
   renderRooms();
   document.getElementById('obj-name').value    = '';
@@ -1705,16 +1776,19 @@ function clearAll() {
 
 // ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
 
-function exportProject() {
+async function exportProject() {
   const d = {
     electrokit: true,
     version: 2,
+    id: currentProjectId,
     name:    document.getElementById('obj-name').value,
     type:    document.getElementById('obj-type').value,
+    phase:   document.getElementById('obj-phase').value,
     breaker: document.getElementById('obj-breaker').value,
     note:    document.getElementById('obj-note').value,
     rooms,
-    cfg:     readSettings()
+    panelOrder,
+    cfg:     await loadSettings()
   };
   const blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
@@ -1724,33 +1798,46 @@ function exportProject() {
   URL.revokeObjectURL(a.href);
 }
 
-function importProject() {
+async function importProject() {
   const inp = document.createElement('input');
   inp.type = 'file';
   inp.accept = '.json,application/json';
-  inp.onchange = e => {
+  inp.onchange = async e => {
     const f = e.target.files[0];
     if (!f) return;
     const reader = new FileReader();
-    reader.onload = ev => {
+    reader.onload = async ev => {
       try {
         const d = JSON.parse(ev.target.result);
         if (!d.electrokit) { alert('Это не файл ElectroKit'); return; }
-        if (d.cfg) { localStorage.setItem('ek_cfg', JSON.stringify(d.cfg)); initSettings(); }
+
+        // Save settings to server
+        if (d.cfg) {
+          await saveSettingsToServer(d.cfg);
+          localStorage.setItem('ek_cfg', JSON.stringify(d.cfg));
+          await initSettings();
+        }
+
+        currentProjectId = d.id || null;
         document.getElementById('obj-name').value    = d.name    || '';
         document.getElementById('obj-type').value    = d.type    || 'apartment';
+        document.getElementById('obj-phase').value   = d.phase   || '1';
         document.getElementById('obj-breaker').value = d.breaker || '32';
         document.getElementById('obj-note').value    = d.note    || '';
         rooms = (d.rooms || []).map(r => ({
           ...r, id: r.id || rid(),
           appliances: (r.appliances || []).map(a => ({ ...a, id: a.id || aid() }))
         }));
+        if (d.panelOrder) panelOrder = d.panelOrder;
+
         const maxRid2 = Math.max(0, ...rooms.map(r => r.id));
         const maxAid2 = Math.max(0, ...rooms.flatMap(r => r.appliances.map(a => a.id)));
         if (maxRid2 > _roomId) _roomId = maxRid2;
         if (maxAid2 > _appId)  _appId  = maxAid2;
+
         renderRooms();
-        saveProject();
+        await saveProject();
+
         document.getElementById('results').style.display = 'none';
         document.getElementById('btn-pdf').style.display = 'none';
         groups = []; lineLens = {};
@@ -1769,19 +1856,29 @@ function doPrint() {
 
 // ─── THEME TOGGLE ────────────────────────────────────────────────────────────
 
-function toggleTheme() {
+async function toggleTheme() {
   const html = document.documentElement;
   const currentTheme = html.getAttribute('data-theme') || 'dark';
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   html.setAttribute('data-theme', newTheme);
+
+  // Save to server
+  const cfg = await loadSettings();
+  cfg.theme = newTheme;
+  await saveSettingsToServer(cfg);
+
+  // Also save to localStorage as backup
   localStorage.setItem('ek_theme', newTheme);
 
   const btn = document.getElementById('theme-toggle');
   if (btn) btn.textContent = newTheme === 'dark' ? '🌓' : '☀️';
 }
 
-function loadTheme() {
-  const saved = localStorage.getItem('ek_theme') || 'dark';
+async function loadTheme() {
+  // Try to load from server settings
+  const cfg = await loadSettings();
+  const saved = cfg.theme || localStorage.getItem('ek_theme') || 'dark';
+
   document.documentElement.setAttribute('data-theme', saved);
   const btn = document.getElementById('theme-toggle');
   if (btn) btn.textContent = saved === 'dark' ? '🌓' : '☀️';
@@ -1789,10 +1886,10 @@ function loadTheme() {
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadTheme();
-  initSettings();
-  loadProject();
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadTheme();
+  await initSettings();
+  await loadProject();
   if (!rooms.length) {
     // Add a default room to get started
     rooms.push({ id: rid(), name: 'Гостиная', appliances: [
